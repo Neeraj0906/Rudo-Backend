@@ -5,24 +5,31 @@ const authRoutes = require('./routes/authRoutes'); // Import authentication rout
 const tradeRoutes = require('./routes/tradeRoutes'); // Import trading routes
 const Stock = require('./models/Stock'); // Import the Stock model
 const User = require('./models/User'); // Import the User model
-
+const helmet = require('helmet');
 const app = express();
 
 // Middleware to serve static files (e.g., fonts, CSS, images)
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        fontSrc: ["'self'", "data:", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        connectSrc: ["'self'"],
+        imgSrc: ["'self'", "data:"],
+      },
+    },
+  })
+);
+
 // Middleware
 app.use(express.json()); // Parse JSON requests
 // Enable CORS for frontend
-app.use(
-  cors({
-    origin: [
-      'http://localhost:3000', // For local development
-      'https://your-vercel-frontend-url.vercel.app', // Replace with your Vercel URL
-    ],
-    credentials: true,
-  })
-);
+app.use(cors({ origin: "*", credentials: true }));
 // Middleware to set Content Security Policy (CSP)
 app.use((req, res, next) => {
   res.setHeader(

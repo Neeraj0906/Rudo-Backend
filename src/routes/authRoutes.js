@@ -4,12 +4,17 @@ const { authenticateUser } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 
-// Public routes
-router.post('/register', registerUser); // Register a new user
-router.post('/login', loginUser);       // Login an existing user
+router.post('/register', registerUser);
+router.post('/login', loginUser);
 
+// Protected Route Example
 router.get('/protected', authenticateUser, (req, res) => {
-  res.json({ message: 'This is a protected route', userId: req.userId });
+  try {
+    res.json({ message: 'This is a protected route', userId: req.userId });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
 });
+
 
 module.exports = router;
