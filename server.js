@@ -42,7 +42,10 @@
     console.log("⏳ Updating stock prices...");
     await updateStockPrices();
   });
-
+// Root Route (Default Response)
+app.get('/', (req, res) => {
+  res.send('Server is running...');
+});
   // Start Server
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
