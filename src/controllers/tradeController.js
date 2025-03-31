@@ -191,17 +191,20 @@ exports.getLeaderboard = async (req, res) => {
     const leaderboard = users.map((user) => {
       let totalPortfolioValue = 0;
 
-      user.portfolio
-        .filter((item) => item.stockId !== null) // Skip invalid stock references
-        .forEach((item) => {
-          totalPortfolioValue += item.stockId.currentPrice * item.quantity;
+      // Ensure portfolio exists and has valid stock data
+      if (user.portfolio && user.portfolio.length > 0) {
+        user.portfolio.forEach((item) => {
+          if (item.stockId && item.stockId.currentPrice) {
+            totalPortfolioValue += item.stockId.currentPrice * item.quantity;
+          }
         });
+      }
 
       return {
         username: user.username,
-        walletBalance: user.walletBalance,
+        walletBalance: user.walletBalance || 0,
         totalPortfolioValue,
-        totalNetWorth: user.walletBalance + totalPortfolioValue,
+        totalNetWorth: (user.walletBalance || 0) + totalPortfolioValue,
       };
     });
 
@@ -213,7 +216,8 @@ exports.getLeaderboard = async (req, res) => {
       leaderboard,
     });
   } catch (err) {
-    console.error(err);
+    console.error("🚨 Error in getLeaderboard:", err);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
