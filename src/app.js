@@ -14,11 +14,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Middleware
 app.use(express.json()); // Parse JSON requests
 // Enable CORS for frontend
-app.use(cors({
-  origin: 'http://localhost:5173', // Allow requests from the frontend
-  credentials: true, // Allow cookies/token if needed
-}));
-
+app.use(
+  cors({
+    origin: [
+      'http://localhost:3000', // For local development
+      'https://your-vercel-frontend-url.vercel.app', // Replace with your Vercel URL
+    ],
+    credentials: true,
+  })
+);
 // Middleware to set Content Security Policy (CSP)
 app.use((req, res, next) => {
   res.setHeader(
@@ -76,4 +80,4 @@ app.get('/seed-stocks', async (req, res) => {
   }
 });
 
-module.exports = app;
+module.exports = app; 
